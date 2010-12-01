@@ -1,19 +1,41 @@
-#!/bin/bash
+#!/usr/bin/perl
 
-function find_darcsdir {
-	local start=`pwd`
-	while [ ! -d _darcs -a "`pwd`" != "/" ]
-	do
-		cd ..
-	done
-	local darcsdir=`pwd`/_darcs
-	cd $start
+use warnings;
+use strict;
+use 5.010;
+use Cwd;
+use File::Spec;
+
+# Find the _darcs directory
+sub find_darcsdir {
+	my $start = getcwd();
+	while (! -d "_darcs") {
+		die "Not in a darcs repository"
+			if getcwd() eq File::Spec->rootdir();
+		chdir(updir());
+	}
+	my $darcsdir=File::Spec->catfile(getcwd, "_darcs");
+	chdir $start;
 	return $darcsdir
 }
 
-darcsdir=find_darcsdir
-ticket=$darcsdir/ticket
-echo "Current ticket name is " < $ticket
-echo "Name of patch: "
-read message
-darcs record -m "$ticket $message"
+# Read the name of the current ticket from _darcs/ticket
+sub ticket_name {
+	my $darcsdir = find_darcsdir();
+	open (my $fh, '<', File::Spec->catfile($darcsdir, "ticket"))
+		or die "Couldn't open _darcs/ticket: $!";
+	my $ticket;
+	{
+		local $/ = undef; # slurp entire file contents;
+		$ticket = <$fh>;
+	}
+	chomp $ticket; # strip trailing newlines
+	close $fh;
+	return $ticket;
+}
+
+my $ticket = ticket_name();
+say "Current ticket name is $ticket";
+print "Name of patch: ";
+chomp(my $message = <STDIN>);
+system("darcs", "record", "-m", "$ticket $message", @ARGV);
