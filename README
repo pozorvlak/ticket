@@ -1,0 +1,9 @@
+ticket - script to support the "spontaneous branch" workflow in darcs.
+
+The ticket script has three subcommands:
+
+	ticket new - set the current ticket name
+	ticket current - display the current ticket name
+	ticket record - record a new patch with the current ticket prepended.
+
+To install, simply copy the ticket script to a directory in your PATH.
