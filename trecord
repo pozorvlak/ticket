@@ -12,7 +12,7 @@ sub find_darcsdir {
 	while (! -d "_darcs") {
 		die "Not in a darcs repository"
 			if getcwd() eq File::Spec->rootdir();
-		chdir(updir());
+		chdir(File::Spec->updir());
 	}
 	my $darcsdir=File::Spec->catfile(getcwd, "_darcs");
 	chdir $start;
