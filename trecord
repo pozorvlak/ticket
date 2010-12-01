@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function find_darcsdir {
+	local start=`pwd`
+	while [ ! -d _darcs -a "`pwd`" != "/" ]
+	do
+		cd ..
+	done
+	local darcsdir=`pwd`/_darcs
+	cd $start
+	return $darcsdir
+}
+
+darcsdir=find_darcsdir
+ticket=$darcsdir/ticket
+echo "Current ticket name is " < $ticket
+echo "Name of patch: "
+read message
+darcs record -m "$ticket $message"
