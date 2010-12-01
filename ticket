@@ -1,5 +1,10 @@
 #!/usr/bin/perl
 
+# Script to support the "spontaneous branches" workflow in Darcs: see
+# http://wiki.darcs.net/SpontaneousBranches
+# Copyright 2010 Miles Gould
+# This program is free software, available under the same terms as Perl itself.
+
 use warnings;
 use strict;
 use 5.010;

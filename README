@@ -6,4 +6,7 @@ The ticket script has three subcommands:
 	ticket current - display the current ticket name
 	ticket record - record a new patch with the current ticket prepended.
 
-To install, simply copy the ticket script to a directory in your PATH.
+To install, simply copy the ticket script to a directory in your PATH. Requires Perl 5.10, because it's frickin' 2010 already.
+
+Copyright Miles Gould 2010.
+This script is free software, available under the same terms as Perl itself.
