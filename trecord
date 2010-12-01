@@ -19,10 +19,15 @@ sub find_darcsdir {
 	return $darcsdir
 }
 
+# Name of the file containing the ticket name
+sub ticket_file {
+	my $darcsdir = find_darcsdir();
+	return File::Spec->catfile($darcsdir, "ticket");
+}
+
 # Read the name of the current ticket from _darcs/ticket
 sub ticket_name {
-	my $darcsdir = find_darcsdir();
-	open (my $fh, '<', File::Spec->catfile($darcsdir, "ticket"))
+	open (my $fh, '<', ticket_file())
 		or die "Couldn't open _darcs/ticket: $!";
 	my $ticket;
 	{
@@ -34,8 +39,32 @@ sub ticket_name {
 	return $ticket;
 }
 
-my $ticket = ticket_name();
-say "Current ticket name is $ticket";
-print "Name of patch: ";
-chomp(my $message = <STDIN>);
-system("darcs", "record", "-m", "$ticket $message", @ARGV);
+sub record {
+	my $ticket = ticket_name();
+	say "Current ticket name is $ticket";
+	print "Name of patch: ";
+	chomp(my $message = <STDIN>);
+	system("darcs", "record", "-m", "$ticket $message", @_);
+}
+
+sub current {
+	my $ticket = ticket_name();
+	say $ticket;
+}
+
+
+sub new_ticket {
+	print "Name of new ticket: ";
+	my $ticket = <STDIN>;
+	open (my $fh, '>', ticket_file())
+		or die "Couldn't open _darcs/ticket: $!";
+	print $fh $ticket;
+	close $fh;
+}
+
+my $command = shift @ARGV;
+given ( $command ) {
+	when (/record/)		{ record(@ARGV); }
+	when (/current/)	{ current(@ARGV); }
+	when (/new/) 		{ new_ticket(@ARGV); }
+}
